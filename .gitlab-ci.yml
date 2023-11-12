@@ -1,0 +1,10 @@
+image: python:3.9
+
+deploy:
+  variables:
+    CONTAINER_PREFIX: dev
+  script:
+    - echo $CI_COMMIT_SHA
+    - docker stop $(docker ps -a | grep ${CONTAINER_PREFIX}_ | awk '{print $1}') || true # docker rm $(docker stop $(docker ps -a -q --filter name=dev*)); if (-not $?) {cd .}
+    - docker rm $(docker ps -a | grep ${CONTAINER_PREFIX}_ | awk '{print $1}') || true
+    - docker-compose -p $env:CONTAINER_PREFIX -f docker-compose.yml up -d
